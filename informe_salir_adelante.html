@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hallazgos — Estud-IA · Sesión 25 mayo 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #1f3366;
+    --bg-card: #162650;
+    --bg-card2: #1a2d5a;
+    --accent: #35c5f2;
+    --warn: #f68b21;
+    --white: #ffffff;
+    --accent-dim: rgba(53,197,242,0.15);
+    --warn-dim: rgba(246,139,33,0.15);
+    --ok-dim: rgba(53,242,140,0.12);
+    --ok: #35f28c;
+    --border: rgba(53,197,242,0.25);
+    --border-warn: rgba(246,139,33,0.35);
+    --footer-color: rgba(53,197,242,0.5);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: var(--bg);
+    color: var(--white);
+    font-family: 'Barlow', sans-serif;
+    font-size: 22px;
+    font-weight: 300;
+    line-height: 1.55;
+    min-height: 100vh;
+  }
+
+  /* ── DISCLAIMER ── */
+  .disclaimer {
+    background: rgba(246,139,33,0.10);
+    border-left: 4px solid var(--warn);
+    padding: 20px 28px;
+    margin: 24px auto;
+    max-width: 1200px;
+    border-radius: 6px;
+  }
+  .disclaimer-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--warn);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .disclaimer p {
+    font-size: 14px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.78);
+    line-height: 1.5;
+    margin-bottom: 6px;
+  }
+  .disclaimer p:last-child { margin-bottom: 0; }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: linear-gradient(135deg, #162650 0%, #1f3366 60%, #1a2d5a 100%);
+    border-bottom: 2px solid var(--accent);
+    padding: 36px 40px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .site-header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 340px; height: 340px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(53,197,242,0.10) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .header-tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    opacity: 0.85;
+  }
+  .header-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(28px, 4vw, 52px);
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.1;
+  }
+  .header-title span { color: var(--accent); }
+  .header-sub {
+    font-size: 18px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.70);
+    margin-top: 4px;
+  }
+  .header-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 14px;
+  }
+  .meta-pill {
+    background: rgba(53,197,242,0.12);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+  }
+
+  /* ── MAIN WRAPPER ── */
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 40px 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 52px;
+  }
+
+  /* ── SECTION ── */
+  .section { }
+  .section-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.20em;
+    text-transform: uppercase;
+    color: var(--accent);
+    opacity: 0.7;
+    margin-bottom: 6px;
+  }
+  .section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(26px, 3vw, 36px);
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    line-height: 1.15;
+  }
+
+  /* ── TWO-COL GRID ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--bg-card);
+    border-radius: 10px;
+    padding: 22px 26px;
+    border: 1px solid var(--border);
+  }
+  .card-ok {
+    border-color: rgba(53,242,140,0.30);
+    background: linear-gradient(135deg, var(--bg-card) 80%, rgba(53,242,140,0.05));
+  }
+  .card-warn {
+    border-color: var(--border-warn);
+    background: linear-gradient(135deg, var(--bg-card) 80%, rgba(246,139,33,0.05));
+  }
+
+  .col-head {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .col-head.ok { color: var(--ok); }
+  .col-head.warn { color: var(--warn); }
+
+  .item-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+  .item-list li {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    font-size: clamp(18px, 1.6vw, 22px);
+    font-weight: 300;
+    line-height: 1.5;
+  }
+  .icon {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+  .icon-ok { background: rgba(53,242,140,0.20); color: var(--ok); border: 1px solid rgba(53,242,140,0.40); }
+  .icon-warn { background: rgba(246,139,33,0.20); color: var(--warn); border: 1px solid rgba(246,139,33,0.40); }
+
+  /* ── DATOS Y CONTEXTO ── */
+  .data-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  .data-card {
+    background: var(--bg-card2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .data-card .figure {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(28px, 3.5vw, 44px);
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .data-card .data-desc {
+    font-size: clamp(17px, 1.5vw, 21px);
+    font-weight: 300;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.4;
+  }
+  .source-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(53,197,242,0.12);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 3px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    width: fit-content;
+    margin-top: 4px;
+  }
+
+  /* ── OPORTUNIDADES ── */
+  .oport-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .oport-card {
+    background: var(--bg-card2);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 8px;
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .oport-card .o-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    line-height: 1.2;
+  }
+  .oport-card .o-body {
+    font-size: clamp(16px, 1.4vw, 20px);
+    font-weight: 300;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.45;
+  }
+
+  /* ── CITAS ── */
+  .quotes-list { display: flex; flex-direction: column; gap: 24px; }
+  .quote-card {
+    background: var(--bg-card2);
+    border-radius: 10px;
+    padding: 26px 30px;
+    border-left: 5px solid var(--accent);
+    position: relative;
+  }
+  .quote-card::before {
+    content: '"';
+    position: absolute;
+    top: 10px; left: 20px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 80px;
+    color: rgba(53,197,242,0.12);
+    line-height: 1;
+    pointer-events: none;
+  }
+  blockquote {
+    font-size: clamp(20px, 1.8vw, 26px);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--white);
+    line-height: 1.55;
+    padding-left: 12px;
+    margin-bottom: 14px;
+    position: relative;
+    z-index: 1;
+  }
+  .quote-attr {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .quote-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── PREGUNTAS ABIERTAS ── */
+  .q-list { display: flex; flex-direction: column; gap: 14px; }
+  .q-item {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    background: var(--bg-card2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 22px;
+  }
+  .q-num {
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(53,197,242,0.15);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .q-text {
+    font-size: clamp(18px, 1.6vw, 22px);
+    font-weight: 300;
+    color: rgba(255,255,255,0.90);
+    line-height: 1.5;
+    padding-top: 4px;
+  }
+
+  /* ── FRASE SÍNTESIS ── */
+  .sintesis {
+    background: linear-gradient(135deg, rgba(53,197,242,0.10) 0%, rgba(53,197,242,0.04) 100%);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--accent);
+    border-radius: 10px;
+    padding: 30px 36px;
+    text-align: center;
+  }
+  .sintesis p {
+    font-size: clamp(20px, 2vw, 26px);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--white);
+    line-height: 1.6;
+  }
+  .sintesis p strong {
+    color: var(--accent);
+    font-style: normal;
+    font-weight: 600;
+  }
+
+  /* ── ALERTAS ── */
+  .alert-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .alert-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-warn);
+    border-top: 4px solid var(--warn);
+    border-radius: 8px;
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .alert-card .a-icon {
+    font-size: 24px;
+    line-height: 1;
+  }
+  .alert-card .a-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--warn);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    line-height: 1.2;
+  }
+  .alert-card .a-body {
+    font-size: clamp(15px, 1.35vw, 19px);
+    font-weight: 300;
+    color: rgba(255,255,255,0.82);
+    line-height: 1.45;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    max-width: 1200px;
+    margin: 0 auto 30px;
+    padding: 0 40px;
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--footer-color);
+    text-align: center;
+    line-height: 1.6;
+    border-top: 1px solid rgba(53,197,242,0.12);
+    padding-top: 20px;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .oport-grid { grid-template-columns: 1fr 1fr; }
+    .alert-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (max-width: 767px) {
+    .site-header { padding: 24px 16px 20px; }
+    main { padding: 24px 16px 48px; gap: 40px; }
+    footer { padding: 20px 16px 0; }
+    
+    .two-col { grid-template-columns: 1fr; }
+    .data-grid { grid-template-columns: 1fr; }
+    .oport-grid { grid-template-columns: 1fr; }
+    .alert-grid { grid-template-columns: 1fr; }
+
+    body { font-size: 18px; }
+    .section-title { font-size: 24px; margin-bottom: 18px; }
+    blockquote { font-size: 20px; }
+    .q-text { font-size: 18px; }
+    .sintesis p { font-size: 19px; }
+    .item-list li { font-size: 18px; }
+    .data-card .data-desc { font-size: 17px; }
+    .oport-card .o-body { font-size: 17px; }
+    .alert-card .a-body { font-size: 16px; }
+
+    .disclaimer { margin: 16px; padding: 16px 18px; }
+    .disclaimer p { font-size: 13px; }
+
+    .quote-card { padding: 20px 18px; }
+    .card { padding: 18px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════ DISCLAIMER ════════════════════ -->
+<div style="max-width:1200px; margin: 24px auto 0; padding: 0 40px;">
+  <div class="disclaimer">
+    <div class="disclaimer-title">⚠ Aviso sobre el uso de Inteligencia Artificial</div>
+    <p>Este documento fue desarrollado con apoyo de herramientas de inteligencia artificial (IA), incluyendo sistemas de generación de texto e imagen. Los contenidos generados fueron revisados por los autores responsables, pero podrían contener errores o sesgos propios de estos modelos.</p>
+    <p>El uso de datos personales en procesos de IA se ajusta a lo establecido por la Ley 1581 de 2012 y la Circular Externa 002 de 2024 de la SIC, aplicando principios de transparencia, necesidad y proporcionalidad.</p>
+    <p>Las imágenes o textos generados por IA no constituyen, por defecto, obras protegidas por derechos de autor. Ante dudas, se recomienda consultar al área legal o de propiedad intelectual.</p>
+    <p>Las decisiones finales reflejan el juicio humano, no reemplazado por IA. Su uso fue supervisado conforme a estándares éticos, técnicos y legales vigentes.</p>
+  </div>
+</div>
+
+<!-- ════════════════════ HEADER ════════════════════ -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-tag">Distrito Especial de Ciencia, Tecnología e Innovación</div>
+    <div class="header-title">Hallazgos de la sesión — <span>Estud-IA</span></div>
+    <div class="header-sub">Formación en habilidades digitales · Informe de panel de expertos</div>
+    <div class="header-meta">
+      <span class="meta-pill">📅 Lunes 25 de mayo de 2026</span>
+      <span class="meta-pill">🏙 Medellín</span>
+      <span class="meta-pill">Programa Estud-IA</span>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ════════ SECCIÓN 1 — CONVERGENCIAS Y DIVERGENCIAS ════════ -->
+  <section class="section">
+    <div class="section-label">Sección 1</div>
+    <h2 class="section-title">Convergencias y Divergencias del Panel</h2>
+    <div class="two-col">
+
+      <!-- VALIDADO -->
+      <div class="card card-ok">
+        <div class="col-head ok">✓ Validado por los expertos</div>
+        <ul class="item-list">
+          <li>
+            <span class="icon icon-ok">✓</span>
+            <span><strong>Intencionalidad y compromiso</strong> como criterio de focalización del gasto público: priorizar jóvenes y adultos con disposición real al esfuerzo e intención de vincularse para maximizar el retorno formativo.</span>
+          </li>
+          <li>
+            <span class="icon icon-ok">✓</span>
+            <span><strong>Salud mental como componente</strong> del programa mediante metodologías tipo <em>Parceros</em>, orientadas a reducir indicadores de depresión y ansiedad en jóvenes inactivos.</span>
+          </li>
+          <li>
+            <span class="icon icon-ok">✓</span>
+            <span><strong>Ajustes razonables frente a rezagos poblacionales:</strong> la propuesta de estructurar adecuaciones que acerquen las competencias de los participantes a las necesidades reales del mercado obtuvo la mayor votación escrita del panel.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- CUESTIONADO -->
+      <div class="card card-warn">
+        <div class="col-head warn">✗ Por profundizar</div>
+        <ul class="item-list">
+          <li>
+            <span class="icon icon-warn">✗</span>
+            <span><strong>Gratuidad total (becas 100%):</strong> múltiples expertos calificaron como error la formación 100% subsidiada, argumentando que destruye la corresponsabilidad y dispara la deserción.</span>
+          </li>
+          <li>
+            <span class="icon icon-warn">✗</span>
+            <span><strong>Meta de 40.000 puestos de práctica/empleo:</strong> las ponencias técnicas determinaron que es importante revisar los cupos tradicionales dentro del tejido empresarial de la ciudad.</span>
+          </li>
+          <li>
+            <span class="icon icon-warn">✗</span>
+            <span><strong>Capacidad instalada de instituciones educativas:</strong> es importante la articulación entre las instituciones de educación, las empresas y el estado, para hacer un trabajo complementario, cada uno con su rol, para absorber 40.000 nuevos cupos de calidad en ciclos cortos.</span>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<footer>
+  Análisis generado a partir de fuentes documentales de la sesión (Resultados.txt · Bloques 1, 2 y 3). · Lunes 25 de mayo de 2026
+</footer>
+
+</body>
+</html>
